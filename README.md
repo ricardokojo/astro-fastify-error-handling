@@ -1,55 +1,42 @@
-# Astro Starter Kit: Basics
+# # astro-fastify-error-handling
 
-```
-npm create astro@latest -- --template basics
-```
+This repository was created to demonstrate a problem found with Astro + Fastify integration. When an error occurs inside an Astro component, it doesn't fall into the error handler set with Fastify. However, if it happens inside an API endpoint, defined by a Typescript file, the desired outcome does happen.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## What does this repository contain
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+It contains a minimal template Astro project, created by running `npm create astro@3.1.6 <project-name> --template minimal`, with the following modifications:
+- added Fastify integration following [Astro official docs](https://docs.astro.build/en/guides/integrations-guide/node/) (manually);
+- added [custom error handler](https://www.fastify.io/docs/latest/Reference/Server/#seterrorhandler);
+- added logger options on Fastify;
+- created `/api` endpoint on Astro;
+- threw errors on `pages/index.astro` and `pages/api.ts`.
 
-![basics](https://user-images.githubusercontent.com/4677417/186188965-73453154-fdec-4d6b-9c34-cb35c248ae5b.png)
+## How to reproduce the error 💥
 
+```sh
+# install dependencies
+npm i
 
-## 🚀 Project Structure
+# build Astro (generates middleware used by Fastify Middie)
+npm run build
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+# run Fastify server
+node src/index.mjs
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+You should be able to access `localhost:8080` and `localhost:8080/api`:
+- Note that `localhost:8080` does not show the custom error 500 page, nor logs the error to the log file;
+- On the other hand, `localhost:8080/api` does both.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## More relevant information
 
-Any static assets, like images, can be placed in the `public/` directory.
+Tests ran with the following setup:
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Lib | Version |
+|---|---|
+| [Node](https://nodejs.org) | 16.14.2 |
+| [NPM](https://www.npmjs.com/) | 8.5.0 |
+| [Astro](https://astro.build/) | 2.6.5 |
+| [Fastify](https://www.fastify.io/) | 4.18.0 |
+| [@fastify/middie](https://github.com/fastify/middie) | 8.3.0 |
+| [@astrojs/node](https://github.com/withastro/astro/tree/main/packages/integrations/node) | 5.2.0 |
